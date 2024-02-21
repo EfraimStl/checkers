@@ -1,6 +1,7 @@
 import pygame
-from checkers.constants import WIDTH, HEIGHT, SQUARE_SIZE
+from checkers.constants import WIDTH, HEIGHT, SQUARE_SIZE, WHITE, BLACK
 from checkers.game import Game
+from minimax.minimax import minimax
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Checkers')
@@ -35,7 +36,11 @@ def main():
     while run:
         clock.tick(FPS)
 
-        if game.winner():
+        if game.turn == BLACK:
+            value, new_board = minimax(game.get_board(), 4, BLACK)
+            game.minimax_move(new_board)
+
+        if game.winner() is not None:
             print(game.winner())
             run = False
 
@@ -48,7 +53,6 @@ def main():
                 game.select(row, col)
 
         game.draw()
-        pygame.display.update()
 
     pygame.quit()
 

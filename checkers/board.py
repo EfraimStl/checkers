@@ -9,9 +9,8 @@ class Board:
         Initialize the Board object.
         """
         self.board = []
-        self.piece = None
-        self.all_red = self.all_white = 12
-        self.red_kings = self.white_kings = 0
+        self.all_black = self.all_white = 12
+        self.black_kings = self.white_kings = 0
         self.create_board()
 
     def move(self, piece, row, col):
@@ -31,7 +30,7 @@ class Board:
             if piece.color == WHITE:
                 self.white_kings += 1
             else:
-                self.red_kings += 1
+                self.black_kings += 1
 
     def get_piece(self, row, col):
         """
@@ -55,7 +54,7 @@ class Board:
         """
         window.fill(DARK_SQUARE_COLOR)
         for row in range(ROWS):
-            for col in range(row % 2, ROWS, 2):
+            for col in range(row % 2, COLS, 2):
                 pygame.draw.rect(window, LIGHT_SQUARE_COLOR, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
     def create_board(self):
@@ -89,6 +88,18 @@ class Board:
                 if piece != 0:
                     piece.draw(window)
 
+    def winner(self):
+        """
+        Determine the winner of the game.
+
+        Returns:
+            str or None: The color of the winning player (WHITE or BLACK), or None if there is no winner yet.
+        """
+        if self.all_black <= 0:
+            return WHITE
+        elif self.all_white <= 0:
+            return BLACK
+
     def remove(self, pieces):
         """
         Remove pieces from the board.
@@ -100,7 +111,7 @@ class Board:
             self.board[piece.row][piece.col] = 0
             if piece != 0:
                 if piece.color == BLACK:
-                    self.all_red -= 1
+                    self.all_black -= 1
                 else:
                     self.all_white -= 1
 
@@ -197,3 +208,29 @@ class Board:
                 last = [current]
             right += 1
         return moves
+
+    def evaluate(self):
+        """
+        Evaluate the current board state.
+
+        Returns:
+            int: The evaluation value of the board state.
+        """
+        return self.all_black - self.all_white + (self.black_kings * 0.5 - self.white_kings * 0.5)
+
+    def get_all_pieces(self, color):
+        """
+        Get all pieces of a given color on the board.
+
+        Args:
+            color (int): The color of the pieces to retrieve.
+
+        Returns:
+            list: A list of pieces of the specified color.
+        """
+        pieces = []
+        for row in self.board:
+            for piece in row:
+                if piece != 0 and piece.color == color:
+                    pieces.append(piece)
+        return pieces

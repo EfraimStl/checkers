@@ -102,13 +102,12 @@ class Game:
         self.turn = WHITE if self.turn == BLACK else BLACK
 
     def winner(self):
-        """
-        Determine the winner of the game.
+        return self.board.winner()
 
-        Returns:
-            str or None: The color of the winning player (WHITE or BLACK), or None if there is no winner yet.
-        """
-        if self.board.all_red <= 0:
-            return WHITE
-        elif self.board.all_white <= 0:
-            return BLACK
+    def get_board(self):
+        return self.board
+
+    def minimax_move(self, board):
+        self.board = board
+        self.change_turn()
+
